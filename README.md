@@ -1,5 +1,20 @@
-# Silly Race Replica
-It is a project where a copy of the hyper-casual style game called Silly Race is prepared individually. The aim of the game is to avoid obstacles on the platform and reach the finish line before artificial intelligence.
+# Silly Race Replica → Skyward Fold (Mach 1)
+This project now contains the building blocks for **Skyward Fold (Mach 1)**, a hypercasual gate runner where a paper dart evolves into a hypersonic aircraft as it sprints down a bright minimalist track. Players choose between split-gate upgrades, auto-fire their weapons, and finish each level with an Overdrive assault on a cardboard fortress.
+
+## Skyward Fold Gameplay Pillars
+- **20-stage evolution ladder** across four eras (Desktop, Propeller, Jet, Stealth/Future) with tier-aware stage data and optional model swaps.
+- **Gate-driven progression** for evolution jumps, firepower multipliers, and speed boosts, plus gravity gates and shredders for risk/reward decisions.
+- **Auto-fire combat loop** that scales projectile count with firepower and switches to Overdrive at the finish line.
+- **Final score system** based on evolution level × collected power-ups to reward aggressive gate choices.
+
+## Scripts Added
+The Unity scripts under `Project/Assets/Scripts/SkywardFold` provide the foundation for the new experience:
+- `SkywardEvolutionSystem` maintains the 20 evolution stages and handles visual swaps.
+- `SkywardGate` applies gate logic for evolution, speed, firepower, gravity, and shredders.
+- `SkywardAutoFire` manages projectile firing and overdrive.
+- `SkywardRunnerStats` tracks speed, firepower, and power-up counts for scoring and UI.
+- `SkywardHUD` updates evolution and power-up UI text.
+- `SkywardFinishLine` + `SkywardScoreReporter` trigger the destruction sequence scoring.
 
 ## Screenshots
 
