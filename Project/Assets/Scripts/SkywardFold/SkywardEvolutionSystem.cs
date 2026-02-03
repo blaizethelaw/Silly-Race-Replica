@@ -54,7 +54,7 @@ public class SkywardEvolutionSystem : MonoBehaviour
 
     private void ApplyStageVisuals()
     {
-        if (modelAnchor == null || CurrentStage == null || CurrentStage.modelPrefab == null)
+        if (modelAnchor == null || CurrentStage == null)
         {
             return;
         }
@@ -64,10 +64,60 @@ public class SkywardEvolutionSystem : MonoBehaviour
             Destroy(currentModelInstance);
         }
 
-        currentModelInstance = Instantiate(CurrentStage.modelPrefab, modelAnchor);
+        if (CurrentStage.modelPrefab != null)
+        {
+            currentModelInstance = Instantiate(CurrentStage.modelPrefab, modelAnchor);
+        }
+        else
+        {
+            currentModelInstance = CreateFallbackModel(CurrentStage);
+            currentModelInstance.transform.SetParent(modelAnchor);
+        }
+
         currentModelInstance.transform.localPosition = Vector3.zero;
         currentModelInstance.transform.localRotation = Quaternion.identity;
         currentModelInstance.transform.localScale = Vector3.one * Mathf.Max(0.01f, CurrentStage.modelScale);
+    }
+
+    private GameObject CreateFallbackModel(SkywardEvolutionStage stage)
+    {
+        PrimitiveType type = PrimitiveType.Cube;
+        Color color = Color.white;
+
+        switch (stage.tierName)
+        {
+            case "Desktop Era":
+                type = PrimitiveType.Cube;
+                color = stage.stageName.Contains("Cardboard") ? new Color(0.6f, 0.4f, 0.2f) : Color.white;
+                break;
+            case "Propeller Era":
+                type = PrimitiveType.Capsule;
+                color = Color.red;
+                break;
+            case "Jet Era":
+                type = PrimitiveType.Cylinder;
+                color = Color.blue;
+                break;
+            case "Stealth/Future Era":
+                type = PrimitiveType.Sphere;
+                color = Color.black;
+                break;
+        }
+
+        GameObject go = GameObject.CreatePrimitive(type);
+        if (go.TryGetComponent<Renderer>(out var renderer))
+        {
+            renderer.material = new Material(Shader.Find("Standard"));
+            renderer.material.color = color;
+        }
+
+        // Remove collider from fallback model to avoid self-collision issues if any
+        if (go.TryGetComponent<Collider>(out var collider))
+        {
+            Destroy(collider);
+        }
+
+        return go;
     }
 
     private void RaiseStageChanged()
@@ -93,10 +143,10 @@ public class SkywardEvolutionSystem : MonoBehaviour
             new SkywardEvolutionStage { stageName = "MiG-21", tierName = "Jet Era", description = "Delta wing, slim hit-box.", enablesAutoFire = true },
             new SkywardEvolutionStage { stageName = "F-4 Phantom", tierName = "Jet Era", description = "Heavy armored jet.", enablesAutoFire = true },
             new SkywardEvolutionStage { stageName = "F-14 Tomcat", tierName = "Jet Era", description = "Swing-wing animation.", enablesAutoFire = true, hasSwingWingAnimation = true },
-            new SkywardEvolutionStage { stageName = "Harrier Jump Jet", tierName = "Jet Era", description = "Vertical lift capability.", enablesAutoFire = true },
-            new SkywardEvolutionStage { stageName = "F-117 Nighthawk", tierName = "Stealth/Future Era", description = "Stealth frame.", enablesAutoFire = true },
-            new SkywardEvolutionStage { stageName = "F-22 Raptor", tierName = "Stealth/Future Era", description = "Advanced thrust vectoring.", enablesAutoFire = true },
-            new SkywardEvolutionStage { stageName = "SR-71 Blackbird", tierName = "Stealth/Future Era", description = "Extreme speed with motion blur.", enablesAutoFire = true },
+            new SkywardEvolutionStage { stageName = "Harrier Jump Jet", tierName = "Jet Era", description = "Vertical lift capability.", enablesAutoFire = true, hasVerticalLift = true },
+            new SkywardEvolutionStage { stageName = "F-117 Nighthawk", tierName = "Stealth/Future Era", description = "Stealth frame.", enablesAutoFire = true, hasStealth = true },
+            new SkywardEvolutionStage { stageName = "F-22 Raptor", tierName = "Stealth/Future Era", description = "Advanced thrust vectoring.", enablesAutoFire = true, hasThrustVectoring = true },
+            new SkywardEvolutionStage { stageName = "SR-71 Blackbird", tierName = "Stealth/Future Era", description = "Extreme speed with motion blur.", enablesAutoFire = true, hasMotionBlur = true },
             new SkywardEvolutionStage { stageName = "F-35 Lightning II", tierName = "Stealth/Future Era", description = "Deploys drone wingmen.", enablesAutoFire = true, hasDroneWingmen = true },
             new SkywardEvolutionStage { stageName = "Aurora Darkstar", tierName = "Stealth/Future Era", description = "Plasma trails at hypersonic speed.", enablesAutoFire = true, hasPlasmaTrail = true }
         };

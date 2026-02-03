@@ -6,11 +6,14 @@ public class SkywardRunnerController : MonoBehaviour
     [SerializeField] private float bounds = 6f;
 
     private SkywardRunnerStats runnerStats;
+    private SkywardEvolutionSystem evolutionSystem;
     private float targetX;
+    private float externalForce;
 
     private void Awake()
     {
         runnerStats = GetComponent<SkywardRunnerStats>();
+        evolutionSystem = GetComponent<SkywardEvolutionSystem>();
         targetX = transform.position.x;
     }
 
@@ -27,8 +30,15 @@ public class SkywardRunnerController : MonoBehaviour
         {
             float delta = Input.GetAxis("Mouse X");
             targetX += delta * lateralSpeed;
-            targetX = Mathf.Clamp(targetX, -bounds, bounds);
         }
+
+        targetX += externalForce * Time.deltaTime;
+        targetX = Mathf.Clamp(targetX, -bounds, bounds);
+    }
+
+    public void ApplyExternalForce(float force)
+    {
+        externalForce = force;
     }
 
     private void MoveForward()
@@ -39,8 +49,17 @@ public class SkywardRunnerController : MonoBehaviour
 
     private void ApplyLateralMovement()
     {
+        bool hasThrustVectoring = evolutionSystem != null && evolutionSystem.CurrentStage != null && evolutionSystem.CurrentStage.hasThrustVectoring;
+
         Vector3 position = transform.position;
-        position.x = Mathf.Lerp(position.x, targetX, Time.deltaTime * 10f);
+        if (hasThrustVectoring)
+        {
+            position.x = targetX; // Instant movement
+        }
+        else
+        {
+            position.x = Mathf.Lerp(position.x, targetX, Time.deltaTime * 10f);
+        }
         transform.position = position;
     }
 }

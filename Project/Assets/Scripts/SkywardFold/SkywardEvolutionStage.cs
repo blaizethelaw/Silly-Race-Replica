@@ -13,4 +13,8 @@ public class SkywardEvolutionStage
     public bool hasSwingWingAnimation;
     public bool hasDroneWingmen;
     public bool hasPlasmaTrail;
+    public bool hasThrustVectoring;
+    public bool hasMotionBlur;
+    public bool hasStealth;
+    public bool hasVerticalLift;
 }
