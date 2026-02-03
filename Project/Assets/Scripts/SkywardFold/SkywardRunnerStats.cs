@@ -42,6 +42,12 @@ public class SkywardRunnerStats : MonoBehaviour
         FirepowerChanged?.Invoke(CurrentFirepower);
     }
 
+    public void AddFirepowerMultiplier(int delta)
+    {
+        firepowerMultiplier = Mathf.Max(1, firepowerMultiplier + delta);
+        FirepowerChanged?.Invoke(CurrentFirepower);
+    }
+
     public void AddPowerups(int amount)
     {
         collectedPowerups = Mathf.Max(0, collectedPowerups + amount);

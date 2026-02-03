@@ -48,6 +48,10 @@ public class SkywardAutoFire : MonoBehaviour
     private void FireBurst()
     {
         int shots = runnerStats != null ? runnerStats.CurrentFirepower : 1;
+        if (evolutionSystem != null && evolutionSystem.CurrentStage != null && evolutionSystem.CurrentStage.hasDroneWingmen)
+        {
+            shots *= 3;
+        }
         shots = Mathf.Max(1, shots);
         float step = shots > 1 ? spreadAngle / (shots - 1) : 0f;
         float startAngle = -spreadAngle * 0.5f;
